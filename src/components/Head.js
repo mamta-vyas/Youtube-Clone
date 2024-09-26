@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
-import { YOUTUBE_SEARCH_API } from "../utils/contants";
+import { HEMBURGER_MENU_LOGO, YOUTUBE_LOGO, YOUTUBE_SEARCH_API } from "../utils/constants";
 import { cacheResults } from "../utils/searchSlice";
 
 const Head = () => {
@@ -13,19 +13,16 @@ const Head = () => {
   const searchCache = useSelector((store) => store.search);
   const dispatch = useDispatch();
 
-  /**
-   *  searchCache = {
-   *     "iphone": ["iphone 11", "iphone 14"]
-   *  }
-   *  searchQuery = iphone
-   */
-
   useEffect(() => {
     const timer = setTimeout(() => {
+      if (searchQuery.trim() === "") {
+        setSuggestions([]);
+        return;
+      }
       if (searchCache[searchQuery]) {
         setSuggestions(searchCache[searchQuery]);
       } else {
-        getSearchSugsestions();
+        getSearchSuggestions();
       }
     }, 200);
 
@@ -34,13 +31,12 @@ const Head = () => {
     };
   }, [searchQuery]);
 
-  const getSearchSugsestions = async () => {
+  const getSearchSuggestions = async () => {
     const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
     const json = await data.json();
-    //console.log(json[1]);
     setSuggestions(json[1]);
 
-    // update cache
+    // Update cache
     dispatch(
       cacheResults({
         [searchQuery]: json[1],
@@ -52,20 +48,25 @@ const Head = () => {
     dispatch(toggleMenu());
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+  };
+
   return (
     <div className="grid grid-flow-col p-5 m-2 shadow-lg">
       <div className="flex col-span-1">
         <img
-          onClick={() => toggleMenuHandler()}
+          onClick={toggleMenuHandler}
           className="h-8 cursor-pointer"
           alt="menu"
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAARVBMVEX///8jHyAgHB0OBQgMAAWlpKQpJSaenZ309PUAAAAIAAD8/Pz5+fna2tqop6dvbW1oZmevrq4tKivFxMQYExRiYGC+vr7Dc4WrAAABB0lEQVR4nO3cS3LCMBAFQGIIIBPbhN/9jxqSyiIsTUnlydB9g1eSNV5MvdUKAAAAAAAAAAAAAAAAXtEwvscwDk3yHabSb2Loy/TRIOHUv8XRH+sHHMrSqR6U+hd1jHSE90P8lHC2/Lc0/0vzMy3WMdynxaFBwu+Jv4uh0cQHAAAAAAAAAIB59jG0ijdcT9sYTtcmK0PncumiuJRz/YD7bbf0ut4f3br+GvQt2PblrXrC3WbpUA/6sXrC/GeY/zvM/5aGmofHZiu0S//M/GoVDwAAAAAAAAAAZsjeuRerN1HL7hPy95fm76DNnzD/Lc3/0rxAJ3v+Xn0AAAAAAAAAAAAAAAD4T74AYhs1O+vt3ioAAAAASUVORK5CYII="
+          src={HEMBURGER_MENU_LOGO}
         />
         <a href="/">
           <img
             className="h-8 mx-2"
             alt="youtube-logo"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png"
+            src={YOUTUBE_LOGO}
           />
         </a>
       </div>
@@ -77,17 +78,21 @@ const Head = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setShowSuggestions(false)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)} // Delay to allow suggestion click
           />
           <button className="border border-gray-400 px-5 py-2 rounded-r-full bg-gray-100">
             🔍
           </button>
         </div>
-        {showSuggestions && (
-          <div className="fixed bg-white py-2 px-2 w-[37rem] shadow-lg rounded-lg border border-gray-100">
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="absolute bg-white py-2 px-2 w-[37rem] shadow-lg rounded-lg border border-gray-100 z-10">
             <ul>
               {suggestions.map((s) => (
-                <li key={s} className="py-2 px-3 shadow-sm hover:bg-gray-100">
+                <li
+                  key={s}
+                  className="py-2 px-3 shadow-sm hover:bg-gray-100 cursor-pointer"
+                  onMouseDown={() => handleSuggestionClick(s)} // Use onMouseDown for better interaction
+                >
                   🔍 {s}
                 </li>
               ))}

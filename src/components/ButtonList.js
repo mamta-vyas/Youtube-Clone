@@ -2,23 +2,12 @@
 import React from "react";
 import Button from "./Button";
 
-const list = ["All", "Live", "Gaming"];
+const lists = ["All","Live","Gaming","Songs","Soccer","Cricket","Valentines","Cooking","News","podcast","Music","Comedy-club","New To You", "Recently Uploaded","Jukebox","History"];
 
 const ButtonList = () => {
   return (
-    <div className="flex">
-      <Button name="All" />
-      <Button name="Gaming" />
-      <Button name="Songs" />
-      <Button name="Live" />
-      <Button name="Soccer" />
-      <Button name="Cricket" />
-      <Button name="Cooking" />
-      <Button name="Cricket" />
-      <Button name="Valentines" />
-      <Button name="Cricket" />
-      <Button name="Cooking" />
-      <Button name="Cricket" />
+    <div className="flex space-x-2">
+      {lists.map( (name , index)  => (<Button key ={index} name ={name}/>  ))}
     </div>
   );
 };

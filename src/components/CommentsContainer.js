@@ -86,7 +86,7 @@ const Comment = ({ data }) => {
       <div className="px-3">
         <p className="font-bold">{name}</p>
         <p>{text}</p>
-      </div>
+       </div>
     </div>
   );
 };
