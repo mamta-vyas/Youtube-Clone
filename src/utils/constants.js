@@ -1,4 +1,4 @@
-const GOOGLE_API_KEY = "AIzaSyDzbeYHcSHpGk8dSMFIvDvZotGC9UNDpdo";
+const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 export const YOUTUBE_LOGO ="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png"
 
